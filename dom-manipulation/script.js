@@ -112,6 +112,12 @@ async function syncWithServer() {
     }
 }
 
+// New function: syncQuotes (just calls syncWithServer)
+function syncQuotes() {
+    syncWithServer();
+}
+
+
 // Sync periodically (e.g., every 5 minutes)
 setInterval(syncWithServer, 5 * 60 * 1000); // 5 minutes in milliseconds
 
