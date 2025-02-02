@@ -75,7 +75,6 @@ async function syncWithServer() {
     const serverQuotes = await fetchQuotesFromServer();
 
     if (serverQuotes) {
-        // Simple conflict resolution: Server data takes precedence.
         quotes = serverQuotes;
         saveQuotes();
         populateCategories();
@@ -83,7 +82,6 @@ async function syncWithServer() {
         showRandomQuote();
         syncStatus.textContent = "Sync complete (GET).";
 
-        // Send local quotes to the server (using POST)
         try {
             const postResponse = await fetch(SERVER_URL, {
                 method: 'POST',
@@ -100,12 +98,12 @@ async function syncWithServer() {
             const postData = await postResponse.json();
             console.log("Quotes sent to server:", postData);
             syncStatus.textContent = "Sync complete (GET & POST).";
+            alert("Quotes synced with server!");
 
         } catch (error) {
             console.error("Error sending quotes to server:", error);
             syncStatus.textContent = "Sync failed (POST).";
         }
-
 
     } else {
         syncStatus.textContent = "Sync failed (GET).";
