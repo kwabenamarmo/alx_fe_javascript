@@ -4,7 +4,7 @@ const addQuoteButton = document.getElementById('addQuoteButton');
 const addQuoteForm = document.getElementById('addQuoteForm');
 const importFile = document.getElementById('importFile');
 const categoryFilter = document.getElementById('categoryFilter');
-const syncStatus = document.createElement('div'); // For sync status display
+const syncStatus = document.createElement('div');
 syncStatus.style.marginTop = '10px';
 document.body.insertBefore(syncStatus, document.querySelector('script'));
 
@@ -81,9 +81,34 @@ async function syncWithServer() {
         populateCategories();
         filterQuotes();
         showRandomQuote();
-        syncStatus.textContent = "Sync complete.";
+        syncStatus.textContent = "Sync complete (GET).";
+
+        // Send local quotes to the server (using POST)
+        try {
+            const postResponse = await fetch(SERVER_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(quotes)
+            });
+
+            if (!postResponse.ok) {
+                throw new Error(`HTTP error! status: ${postResponse.status}`);
+            }
+
+            const postData = await postResponse.json();
+            console.log("Quotes sent to server:", postData);
+            syncStatus.textContent = "Sync complete (GET & POST).";
+
+        } catch (error) {
+            console.error("Error sending quotes to server:", error);
+            syncStatus.textContent = "Sync failed (POST).";
+        }
+
+
     } else {
-        syncStatus.textContent = "Sync failed.";
+        syncStatus.textContent = "Sync failed (GET).";
     }
 }
 
